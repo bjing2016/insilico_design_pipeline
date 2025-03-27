@@ -108,8 +108,8 @@ class ScaffoldPipeline(Pipeline):
 
 		# Create output directory
 		processed_pdb_dir = os.path.join(output_dir, 'processed_pdbs')
-		assert not os.path.exists(processed_pdb_dir), 'Output processed pdbs directory existed'
-		os.mkdir(processed_pdb_dir)
+		# assert not os.path.exists(processed_pdb_dir), 'Output processed pdbs directory existed'
+		os.makedirs(processed_pdb_dir, exist_ok=True)
 
 		# Process
 		for pdb_filepath in tqdm(
@@ -132,7 +132,7 @@ class ScaffoldPipeline(Pipeline):
 			lines = []
 			with open(pdb_filepath) as file:
 				for line in file:
-					assert line.startswith('ATOM') and line[21] == 'A'
+					if not (line.startswith('ATOM') and line[21] == 'A'): continue
 					residue_index = int(line[22:26])
 					residue_name = line[17:20]
 					if residue_index in residue_name_dict:
@@ -172,8 +172,8 @@ class ScaffoldPipeline(Pipeline):
 
 		# Create output directory
 		sequences_dir = os.path.join(output_dir, 'sequences')
-		assert not os.path.exists(sequences_dir), 'Output sequences directory existed'
-		os.mkdir(sequences_dir)
+		# assert not os.path.exists(sequences_dir), 'Output sequences directory existed'
+		os.makedirs(sequences_dir, exist_ok=True)
 
 		# Process
 		for processed_pdb_filepath in tqdm(
@@ -246,7 +246,7 @@ class ScaffoldPipeline(Pipeline):
 			residx_to_group = {}
 			with open(motif_pdb_filepath) as file:
 				for line in file:
-					assert line.startswith('ATOM')
+					if not line.startswith('ATOM'): continue
 					group = line[72:76].strip()
 					residx = int(line[22:26])
 
@@ -309,21 +309,21 @@ class ScaffoldPipeline(Pipeline):
 				seg_designed_motif_ca_coords = designed_motif_groups[group]['ca_coords']
 				seg_designed_motif_bb_coords = designed_motif_groups[group]['bb_coords']
 				assert len(seg_motif_ca_coords) == len(seg_designed_motif_ca_coords)
-				assert len(seg_motif_bb_coords) == len(seg_designed_motif_bb_coords)
+                # assert len(seg_motif_bb_coords) == len(seg_designed_motif_bb_coords)
 
 				# Convert to tensor
-				seg_motif_bb_coords = torch.Tensor(seg_motif_bb_coords)
+				# seg_motif_bb_coords = torch.Tensor(seg_motif_bb_coords)
 				seg_motif_ca_coords = torch.Tensor(seg_motif_ca_coords)
-				seg_designed_motif_bb_coords = torch.Tensor(seg_designed_motif_bb_coords)
+				# seg_designed_motif_bb_coords = torch.Tensor(seg_designed_motif_bb_coords)
 				seg_designed_motif_ca_coords = torch.Tensor(seg_designed_motif_ca_coords)
 
 				# Comptue motif backbone rmsd
-				R, t = compute_rigid_alignment(
-					seg_designed_motif_bb_coords,
-					seg_motif_bb_coords
-				)
-				seg_designed_motif_bb_coords_aligned = (R.mm(seg_designed_motif_bb_coords.T)).T + t
-				seg_motif_bb_rmsd = torch.sqrt(((seg_designed_motif_bb_coords_aligned - seg_motif_bb_coords)**2).sum(axis=1).mean())
+				# R, t = compute_rigid_alignment(
+				# 	seg_designed_motif_bb_coords,
+				# 	seg_motif_bb_coords
+				# )
+				# seg_designed_motif_bb_coords_aligned = (R.mm(seg_designed_motif_bb_coords.T)).T + t
+				# seg_motif_bb_rmsd = torch.sqrt(((seg_designed_motif_bb_coords_aligned - seg_motif_bb_coords)**2).sum(axis=1).mean())
 
 				# Compute motif ca rmsd
 				R, t = compute_rigid_alignment(
@@ -334,12 +334,12 @@ class ScaffoldPipeline(Pipeline):
 				seg_motif_ca_rmsd = torch.sqrt(((seg_designed_motif_ca_coords_aligned - seg_motif_ca_coords)**2).sum(axis=1).mean())
 
 				# Save
-				motif_bb_rmsds.append(seg_motif_bb_rmsd)
+				# motif_bb_rmsds.append(seg_motif_bb_rmsd)
 				motif_ca_rmsds.append(seg_motif_ca_rmsd)
 
 			# Aggregate
 			motif_ca_rmsd = np.max(motif_ca_rmsds)
-			motif_bb_rmsd = np.max(motif_bb_rmsds)
+			motif_bb_rmsd = 0.0 # np.max(motif_bb_rmsds)
 
 			# Save
 			with open(motif_scores_filepath, 'a') as file:

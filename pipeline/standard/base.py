@@ -91,8 +91,8 @@ class Pipeline(ABC):
 
 		# Create output directory
 		sequences_dir = os.path.join(output_dir, 'sequences')
-		assert not os.path.exists(sequences_dir), 'Output sequences directory existed'
-		os.mkdir(sequences_dir)
+		# assert not os.path.exists(sequences_dir), 'Output sequences directory existed'
+		os.makedirs(sequences_dir, exist_ok=True)
 
 		# Process
 		for pdb_filepath in tqdm(
@@ -128,8 +128,8 @@ class Pipeline(ABC):
 
 		# Create output directory
 		structures_dir = os.path.join(output_dir, 'structures')
-		assert not os.path.exists(structures_dir), 'Output structures directory existed'
-		os.mkdir(structures_dir)
+		# assert not os.path.exists(structures_dir), 'Output structures directory existed'
+		os.makedirs(structures_dir, exist_ok=True)
 
 		# Process
 		for filepath in tqdm(
@@ -180,8 +180,8 @@ class Pipeline(ABC):
 
 		# Create output directory
 		scores_dir = os.path.join(output_dir, 'scores')
-		assert not os.path.exists(scores_dir), 'Output scores directory existed'
-		os.mkdir(scores_dir)
+		# assert not os.path.exists(scores_dir), 'Output scores directory existed'
+		os.makedirs(scores_dir, exist_ok=True)
 
 		# Process
 		for designed_pdb_filepath in tqdm(
@@ -232,10 +232,10 @@ class Pipeline(ABC):
 		# Create output directory
 		results_dir = os.path.join(output_dir, 'results')
 		designs_dir = os.path.join(output_dir, 'designs')
-		assert not os.path.exists(results_dir), 'Output results directory existed'
-		assert not os.path.exists(designs_dir), 'Output designs directory existed'
-		os.mkdir(results_dir)
-		os.mkdir(designs_dir)
+		# assert not os.path.exists(results_dir), 'Output results directory existed'
+		# assert not os.path.exists(designs_dir), 'Output designs directory existed'
+		os.makedirs(results_dir, exist_ok=True)
+		os.makedirs(designs_dir, exist_ok=True)
 
 		# Create scores filepath
 		scores_filepath = os.path.join(results_dir, 'single_scores.csv')
@@ -315,14 +315,14 @@ class Pipeline(ABC):
 		"""
 
 		# Create output filepath
-		assert os.path.exists(results_dir), 'Missing output results directory'
+		# assert os.path.exists(results_dir), 'Missing output results directory'
 		generated_secondary_filepath = os.path.join(results_dir, 'single_generated_secondary.csv')
-		assert not os.path.exists(generated_secondary_filepath), 'Output generated secondary filepath existed'
+		# assert not os.path.exists(generated_secondary_filepath), 'Output generated secondary filepath existed'
 		with open(generated_secondary_filepath, 'w') as file:
 			columns = ['domain', 'generated_pct_helix', 'generated_pct_strand', 'generated_pct_ss', 'generated_pct_left_helix']
 			file.write(','.join(columns) + '\n')
 		designed_secondary_filepath = os.path.join(results_dir, 'single_designed_secondary.csv')
-		assert not os.path.exists(designed_secondary_filepath), 'Output designed secondary filepath existed'
+		# assert not os.path.exists(designed_secondary_filepath), 'Output designed secondary filepath existed'
 		with open(designed_secondary_filepath, 'w') as file:
 			columns = ['domain', 'designed_pct_helix', 'designed_pct_strand', 'designed_pct_ss', 'designed_pct_left_helix']
 			file.write(','.join(columns) + '\n')
@@ -389,9 +389,9 @@ class Pipeline(ABC):
 		"""
 
 		# Create output filepath
-		assert os.path.exists(results_dir), 'Missing output results directory'
+		# assert os.path.exists(results_dir), 'Missing output results directory'
 		info_filepath = os.path.join(output_dir, 'info.csv')
-		assert not os.path.exists(info_filepath), 'Output info filepath existed'
+		# assert not os.path.exists(info_filepath), 'Output info filepath existed'
 
 		# Process single level information
 		for idx, filepath in enumerate(glob.glob(os.path.join(results_dir, 'single_*.csv'))):
